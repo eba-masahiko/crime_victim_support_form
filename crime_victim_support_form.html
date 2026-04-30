@@ -1,0 +1,289 @@
+
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: var(--font-sans); }
+.wrap { max-width: 640px; margin: 0 auto; padding: 1.5rem 1rem; }
+.step { display: none; }
+.step.active { display: block; }
+.progress-bar { display: flex; gap: 6px; margin-bottom: 2rem; }
+.progress-dot { flex: 1; height: 4px; border-radius: 4px; background: var(--color-border-tertiary); transition: background 0.3s; }
+.progress-dot.done { background: #1D9E75; }
+.progress-dot.active { background: #5DCAA5; }
+.step-label { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 0.5rem; }
+.step-title { font-size: 20px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 0.5rem; }
+.step-desc { font-size: 15px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 1.5rem; }
+.field-block { margin-bottom: 1.25rem; }
+.field-label { font-size: 14px; font-weight: 500; color: var(--color-text-primary); margin-bottom: 6px; display: block; }
+.field-sub { font-size: 13px; color: var(--color-text-secondary); margin-bottom: 8px; }
+input[type="text"], input[type="number"], textarea, select {
+  width: 100%; padding: 10px 12px; font-size: 15px;
+  border: 0.5px solid var(--color-border-secondary);
+  border-radius: var(--border-radius-md);
+  background: var(--color-background-primary);
+  color: var(--color-text-primary);
+  font-family: var(--font-sans);
+}
+textarea { min-height: 100px; resize: vertical; line-height: 1.7; }
+input:focus, textarea:focus, select:focus { outline: none; border-color: #1D9E75; box-shadow: 0 0 0 2px rgba(29,158,117,0.15); }
+.btn-row { display: flex; gap: 10px; margin-top: 1.75rem; }
+.btn { padding: 11px 22px; border-radius: var(--border-radius-md); font-size: 15px; cursor: pointer; border: 0.5px solid var(--color-border-secondary); background: var(--color-background-primary); color: var(--color-text-primary); font-family: var(--font-sans); transition: background 0.15s; }
+.btn:hover { background: var(--color-background-secondary); }
+.btn-primary { background: #1D9E75; color: #fff; border-color: #1D9E75; font-weight: 500; }
+.btn-primary:hover { background: #0F6E56; border-color: #0F6E56; }
+.btn-back { color: var(--color-text-secondary); }
+.notice { background: var(--color-background-secondary); border-left: 3px solid #1D9E75; border-radius: 0 var(--border-radius-md) var(--border-radius-md) 0; padding: 12px 14px; font-size: 13px; color: var(--color-text-secondary); line-height: 1.7; margin-bottom: 1.5rem; }
+.result-card { background: var(--color-background-primary); border: 0.5px solid var(--color-border-tertiary); border-radius: var(--border-radius-lg); padding: 1.25rem 1.5rem; margin-bottom: 1rem; }
+.result-section-title { font-size: 12px; font-weight: 500; color: #0F6E56; letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 10px; }
+.result-row { display: flex; gap: 12px; margin-bottom: 8px; font-size: 14px; line-height: 1.6; }
+.result-key { color: var(--color-text-secondary); min-width: 80px; flex-shrink: 0; }
+.result-val { color: var(--color-text-primary); font-weight: 500; white-space: pre-wrap; }
+.print-btn { background: var(--color-background-secondary); }
+.error { font-size: 13px; color: #A32D2D; margin-top: 5px; display: none; }
+.radio-group { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 6px; }
+.radio-chip input { display: none; }
+.radio-chip label { display: inline-block; padding: 7px 14px; border: 0.5px solid var(--color-border-secondary); border-radius: 20px; font-size: 14px; cursor: pointer; color: var(--color-text-primary); transition: all 0.15s; }
+.radio-chip input:checked + label { background: #E1F5EE; border-color: #1D9E75; color: #0F6E56; font-weight: 500; }
+</style>
+
+<div class="wrap">
+  <div class="progress-bar">
+    <div class="progress-dot active" id="dot0"></div>
+    <div class="progress-dot" id="dot1"></div>
+    <div class="progress-dot" id="dot2"></div>
+    <div class="progress-dot" id="dot3"></div>
+  </div>
+
+  <!-- Step 0: Welcome -->
+  <div class="step active" id="step0">
+    <div class="step-label">はじめに</div>
+    <div class="step-title">ようこそ</div>
+    <div class="step-desc">このフォームは、<strong>被害者手帳</strong>に書く内容を整理するためのものです。<br>入力した情報は、このページの外に保存されません。</div>
+    <div class="notice">
+      🔒 入力した内容はどこにも保存されません。<br>フォームを閉じると、すべて消えます。<br>安心して入力してください。
+    </div>
+    <div class="step-desc">3つのステップで入力します：<br>① あなたのこと　② 被害のこと（いつ・どこで）　③ 何が起きたか</div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="goStep(1)">はじめる →</button>
+    </div>
+  </div>
+
+  <!-- Step 1: 個人情報 -->
+  <div class="step" id="step1">
+    <div class="step-label">ステップ 1 / 3</div>
+    <div class="step-title">あなたのことを教えてください</div>
+    <div class="step-desc">むずかしい言葉がある場合は、スタッフに聞いてください。</div>
+    <div class="field-block">
+      <label class="field-label" for="name">お名前（なまえ）</label>
+      <div class="field-sub">フルネームを書いてください（例：田中 花子）</div>
+      <input type="text" id="name" placeholder="田中 花子">
+      <div class="error" id="err-name">お名前を入力してください</div>
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="age">年齢（ねんれい）</label>
+      <div class="field-sub">今、何さいですか？</div>
+      <input type="number" id="age" min="0" max="120" placeholder="例：32" style="max-width:120px">
+      <div class="error" id="err-age">年齢を入力してください</div>
+    </div>
+    <div class="field-block">
+      <label class="field-label">性別（せいべつ）　※任意（かかなくてもよい）</label>
+      <div class="radio-group">
+        <div class="radio-chip"><input type="radio" name="gender" id="g1" value="女性"><label for="g1">女性</label></div>
+        <div class="radio-chip"><input type="radio" name="gender" id="g2" value="男性"><label for="g2">男性</label></div>
+        <div class="radio-chip"><input type="radio" name="gender" id="g3" value="その他"><label for="g3">その他</label></div>
+        <div class="radio-chip"><input type="radio" name="gender" id="g4" value="答えたくない"><label for="g4">答えたくない</label></div>
+      </div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(0)">← もどる</button>
+      <button class="btn btn-primary" onclick="validateAndGo(1,2)">つぎへ →</button>
+    </div>
+  </div>
+
+  <!-- Step 2: 被害の日時・場所 -->
+  <div class="step" id="step2">
+    <div class="step-label">ステップ 2 / 3</div>
+    <div class="step-title">被害（ひがい）について：いつ・どこで</div>
+    <div class="step-desc">おぼえている範囲（はんい）で、大丈夫です。</div>
+    <div class="field-block">
+      <label class="field-label" for="date">いつ起きましたか？</label>
+      <div class="field-sub">年・月・日がわかれば書いてください。「○○年ごろ」でも大丈夫です。</div>
+      <input type="text" id="date" placeholder="例：2024年3月15日　または　2024年3月ごろ">
+      <div class="error" id="err-date">おおよその日時を入力してください</div>
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="time">時間帯（じかんたい）　※任意</label>
+      <div class="radio-group">
+        <div class="radio-chip"><input type="radio" name="timerange" id="t1" value="朝（6〜12時）"><label for="t1">朝（6〜12時）</label></div>
+        <div class="radio-chip"><input type="radio" name="timerange" id="t2" value="昼（12〜18時）"><label for="t2">昼（12〜18時）</label></div>
+        <div class="radio-chip"><input type="radio" name="timerange" id="t3" value="夜（18〜24時）"><label for="t3">夜（18〜24時）</label></div>
+        <div class="radio-chip"><input type="radio" name="timerange" id="t4" value="深夜（0〜6時）"><label for="t4">深夜（0〜6時）</label></div>
+        <div class="radio-chip"><input type="radio" name="timerange" id="t5" value="おぼえていない"><label for="t5">おぼえていない</label></div>
+      </div>
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="place">どこで起きましたか？</label>
+      <div class="field-sub">住所（じゅうしょ）でも、「駅の近く」などでも大丈夫です。</div>
+      <input type="text" id="place" placeholder="例：東京都新宿区〇〇　または　自宅（じたく）の近く">
+      <div class="error" id="err-place">場所を入力してください</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(1)">← もどる</button>
+      <button class="btn btn-primary" onclick="validateAndGo(2,3)">つぎへ →</button>
+    </div>
+  </div>
+
+  <!-- Step 3: 被害状況 -->
+  <div class="step" id="step3">
+    <div class="step-label">ステップ 3 / 3</div>
+    <div class="step-title">何が起きたか、教えてください</div>
+    <div class="step-desc">つらいことを思い出すのは大変です。できる範囲（はんい）で大丈夫です。<br>書きたくないことは書かなくても構いません。</div>
+    <div class="field-block">
+      <label class="field-label">被害（ひがい）の種類（しゅるい）　※あてはまるものをえらんでください（複数可）</label>
+      <div class="radio-group" id="harm-types">
+        <div class="radio-chip"><input type="checkbox" id="h1" value="身体的被害（けがをさせられた）"><label for="h1">身体的（けが）</label></div>
+        <div class="radio-chip"><input type="checkbox" id="h2" value="性的被害"><label for="h2">性的被害</label></div>
+        <div class="radio-chip"><input type="checkbox" id="h3" value="財産的被害（お金・物をとられた）"><label for="h3">財産（お金・物）</label></div>
+        <div class="radio-chip"><input type="checkbox" id="h4" value="精神的被害（おどされた・ハラスメント）"><label for="h4">精神的（おどし等）</label></div>
+        <div class="radio-chip"><input type="checkbox" id="h5" value="その他"><label for="h5">その他</label></div>
+      </div>
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="what">何が起きたか、自分の言葉で書いてください</label>
+      <div class="field-sub">短くても大丈夫です。「○○された」「○○を持っていかれた」など。</div>
+      <textarea id="what" placeholder="例：帰り道に知らない人に声をかけられ、バッグを奪われました。"></textarea>
+      <div class="error" id="err-what">被害の内容を入力してください</div>
+    </div>
+    <div class="field-block">
+      <label class="field-label" for="aftermath">その後（そのご）、どうなりましたか？　※任意</label>
+      <div class="field-sub">警察に届けた、病院に行ったなど。</div>
+      <textarea id="aftermath" style="min-height:72px" placeholder="例：警察に届け出ました。病院には行っていません。"></textarea>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(2)">← もどる</button>
+      <button class="btn btn-primary" onclick="showResult()">まとめを見る →</button>
+    </div>
+  </div>
+
+  <!-- Step 4: Result -->
+  <div class="step" id="step4">
+    <div class="step-label">完成（かんせい）</div>
+    <div class="step-title">被害者手帳への記載内容</div>
+    <div class="step-desc">下の内容を被害者手帳に書き写してください。印刷（いんさつ）もできます。</div>
+
+    <div class="result-card" id="result-personal">
+      <div class="result-section-title">① 本人情報</div>
+      <div class="result-row"><span class="result-key">氏名</span><span class="result-val" id="r-name"></span></div>
+      <div class="result-row"><span class="result-key">年齢</span><span class="result-val" id="r-age"></span></div>
+      <div class="result-row" id="r-gender-row"><span class="result-key">性別</span><span class="result-val" id="r-gender"></span></div>
+    </div>
+
+    <div class="result-card" id="result-incident">
+      <div class="result-section-title">② 被害の日時・場所</div>
+      <div class="result-row"><span class="result-key">日時</span><span class="result-val" id="r-date"></span></div>
+      <div class="result-row" id="r-time-row"><span class="result-key">時間帯</span><span class="result-val" id="r-time"></span></div>
+      <div class="result-row"><span class="result-key">場所</span><span class="result-val" id="r-place"></span></div>
+    </div>
+
+    <div class="result-card" id="result-detail">
+      <div class="result-section-title">③ 被害の内容</div>
+      <div class="result-row" id="r-types-row"><span class="result-key">種類</span><span class="result-val" id="r-types"></span></div>
+      <div class="result-row"><span class="result-key">状況</span><span class="result-val" id="r-what"></span></div>
+      <div class="result-row" id="r-aftermath-row"><span class="result-key">その後</span><span class="result-val" id="r-aftermath"></span></div>
+    </div>
+
+    <div class="notice" style="margin-top:0.5rem;">
+      この画面を閉じると内容は消えます。手帳への書き写しが終わったら、このページを閉じてください。
+    </div>
+
+    <div class="btn-row">
+      <button class="btn btn-back" onclick="goStep(3)">← 修正（しゅうせい）する</button>
+      <button class="btn print-btn" onclick="window.print()">🖨 印刷する</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentStep = 0;
+
+function goStep(n) {
+  document.getElementById('step' + currentStep).classList.remove('active');
+  document.getElementById('step' + n).classList.add('active');
+  currentStep = n;
+  updateDots();
+  window.scrollTo(0,0);
+}
+
+function updateDots() {
+  for (let i = 0; i < 4; i++) {
+    const d = document.getElementById('dot' + i);
+    d.classList.remove('active','done');
+    if (i < currentStep) d.classList.add('done');
+    else if (i === currentStep) d.classList.add('active');
+  }
+}
+
+function showError(id, show) {
+  document.getElementById(id).style.display = show ? 'block' : 'none';
+}
+
+function validateAndGo(from, to) {
+  let ok = true;
+  if (from === 1) {
+    const name = document.getElementById('name').value.trim();
+    const age = document.getElementById('age').value.trim();
+    if (!name) { showError('err-name', true); ok = false; } else showError('err-name', false);
+    if (!age) { showError('err-age', true); ok = false; } else showError('err-age', false);
+  }
+  if (from === 2) {
+    const date = document.getElementById('date').value.trim();
+    const place = document.getElementById('place').value.trim();
+    if (!date) { showError('err-date', true); ok = false; } else showError('err-date', false);
+    if (!place) { showError('err-place', true); ok = false; } else showError('err-place', false);
+  }
+  if (ok) goStep(to);
+}
+
+function showResult() {
+  const what = document.getElementById('what').value.trim();
+  if (!what) { showError('err-what', true); return; }
+  showError('err-what', false);
+
+  document.getElementById('r-name').textContent = document.getElementById('name').value.trim();
+  document.getElementById('r-age').textContent = document.getElementById('age').value.trim() + '歳';
+
+  const gender = document.querySelector('input[name="gender"]:checked');
+  const gRow = document.getElementById('r-gender-row');
+  if (gender && gender.value !== '答えたくない') {
+    document.getElementById('r-gender').textContent = gender.value;
+    gRow.style.display = 'flex';
+  } else { gRow.style.display = 'none'; }
+
+  const date = document.getElementById('date').value.trim();
+  const timeRange = document.querySelector('input[name="timerange"]:checked');
+  document.getElementById('r-date').textContent = date;
+  const tRow = document.getElementById('r-time-row');
+  if (timeRange && timeRange.value !== 'おぼえていない') {
+    document.getElementById('r-time').textContent = timeRange.value;
+    tRow.style.display = 'flex';
+  } else { tRow.style.display = 'none'; }
+  document.getElementById('r-place').textContent = document.getElementById('place').value.trim();
+
+  const checked = Array.from(document.querySelectorAll('#harm-types input:checked')).map(e => e.value);
+  const tRow2 = document.getElementById('r-types-row');
+  if (checked.length) {
+    document.getElementById('r-types').textContent = checked.join('、');
+    tRow2.style.display = 'flex';
+  } else { tRow2.style.display = 'none'; }
+
+  document.getElementById('r-what').textContent = what;
+
+  const aftermath = document.getElementById('aftermath').value.trim();
+  const aRow = document.getElementById('r-aftermath-row');
+  if (aftermath) {
+    document.getElementById('r-aftermath').textContent = aftermath;
+    aRow.style.display = 'flex';
+  } else { aRow.style.display = 'none'; }
+
+  goStep(4);
+}
+</script>
